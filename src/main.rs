@@ -14,7 +14,7 @@ fn main() {
     let media_player = instance.media_player().unwrap();
 
     // Load the video file
-    let media = instance.media_path("path/to/video.mp4").unwrap();
+    let media = instance.media_path("/Users/martinsk/Movies/Intro-Movie_2015Horsens.mp4").unwrap();
     media_player.set_media(&media);
 
     // Start playing the video in a loop
