@@ -1,28 +1,38 @@
-use std::process::Command;
-use std::thread::sleep;
-use std::time::Duration;
-use vlc::MediaPlayer;
+use std::fs::File;
+use std::io::{BufReader};
+use mp4::{Result};
 
-fn main() {
-    // Sti til din MP4-video
-    let video_path = "/Users/martinsk/Movies/Intro-Movie_2015Horsens.mp4";
+fn main() -> Result<()> {
+    let f = File::open("tests/samples/minimal.mp4").unwrap();
+    let size = f.metadata()?.len();
+    let reader = BufReader::new(f);
 
-    // Opret en ny instans af VLC MediaPlayer
-    let mut player = MediaPlayer::new().expect("Failed to initialize VLC");
+    let mp4 = mp4::Mp4Reader::read_header(reader, size)?;
 
-    // Afspil videoen
-    player.play().expect("Failed to play the video");
+    // Print boxes.
+    println!("major brand: {}", mp4.ftyp.major_brand);
+    println!("timescale: {}", mp4.moov.mvhd.timescale);
 
-    // Lad programmet køre, mens videoen afspilles
-    loop {
-        // Tjek om videoen stadig afspilles
-        if !player.is_playing() {
-            break;
-        }
-        sleep(Duration::from_millis(100));
+    // Use available methods.
+    println!("size: {}", mp4.size());
+
+    let mut compatible_brands = String::new();
+    for brand in mp4.compatible_brands().iter() {
+        compatible_brands.push_str(&brand.to_string());
+        compatible_brands.push_str(",");
     }
+    println!("compatible brands: {}", compatible_brands);
+    println!("duration: {:?}", mp4.duration());
 
-    // Videoen er færdig med at afspille, så afslut programmet
-    player.stop().expect("Failed to stop the video");
+    // Track info.
+    for track in mp4.tracks().values() {
+        println!(
+            "track: #{}({}) {} : {}",
+            track.track_id(),
+            track.language(),
+            track.track_type()?,
+            track.box_type()?,
+        );
+    }
+    Ok(())
 }
-

@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 fltk = "1"
-vlc-rs = { git = "https://github.com/garkimasera/vlc-rs.git" }
+mp4 = "0.13.0"
