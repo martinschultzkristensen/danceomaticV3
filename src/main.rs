@@ -1,9 +1,9 @@
+use mp4::Result;
 use std::fs::File;
-use std::io::{BufReader};
-use mp4::{Result};
+use std::io::BufReader;
 
 fn main() -> Result<()> {
-    let f = File::open("tests/samples/minimal.mp4").unwrap();
+    let f = File::open("/Users/martinsk/projects/danceomaticv3/Intro-Movie_2015Horsens.mp4").unwrap();
     let size = f.metadata()?.len();
     let reader = BufReader::new(f);
 
@@ -19,7 +19,7 @@ fn main() -> Result<()> {
     let mut compatible_brands = String::new();
     for brand in mp4.compatible_brands().iter() {
         compatible_brands.push_str(&brand.to_string());
-        compatible_brands.push_str(",");
+        compatible_brands.push(',');
     }
     println!("compatible brands: {}", compatible_brands);
     println!("duration: {:?}", mp4.duration());
